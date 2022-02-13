@@ -10,15 +10,19 @@ import {
 import CheckBox from "expo-checkbox";
 import React from "react";
 const { width, height } = Dimensions.get("screen");
+import { Picker } from "@react-native-picker/picker";
 
 import { useSelector, useDispatch } from "react-redux";
 import { addBug, removeBug, userInput, resolveBug } from "../Redux/actions";
 
 const Home = () => {
   const inpRef = React.useRef(null);
+
+  //Redux
   const arr = useSelector((state) => state.reducer);
   const inp = useSelector((state) => state.handleInput);
   const dispatch = useDispatch();
+  //
 
   const handleAddButton = () => {
     dispatch(addBug(inp));
@@ -35,7 +39,7 @@ const Home = () => {
 
   return (
     <View
-      style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "black" }}
+      style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}
     >
       <View style={styles.inputContainer}>
         <TextInput
@@ -48,32 +52,39 @@ const Home = () => {
           <Text style={styles.font}>ADD</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.flatlistContainer}>
-        <FlatList
-          keyExtractor={(item) => item.key}
-          data={arr}
-          renderItem={({ item }) => {
-            return (
-              <View style={styles.CON}>
-                <TouchableOpacity
-                  style={styles.singleItemContainer}
-                  onPress={() => handleRemove(item.key)}
-                >
-                  <Text style={styles.listItem}>{item.desc}</Text>
-                </TouchableOpacity>
-                <View>
-                  <CheckBox
-                    value={item.resolve}
-                    color="#1E90FF"
-                    onValueChange={() => handleCheckBox(item.key)}
-                  />
-                </View>
-              </View>
-            );
-          }}
-        />
+      <View style={styles.pickerContainer}>
+        <Picker style={styles.picker}>
+          <Picker.item label={"Resolved"} value={"Resolved"} />
+        </Picker>
       </View>
+
+      {!!arr.length && (
+        <View style={styles.flatlistContainer}>
+          <FlatList
+            keyExtractor={(item) => item.key}
+            data={arr}
+            renderItem={({ item }) => {
+              return (
+                <View style={styles.CON}>
+                  <TouchableOpacity
+                    style={styles.singleItemContainer}
+                    onPress={() => handleRemove(item.key)}
+                  >
+                    <Text style={styles.listItem}>{item.desc}</Text>
+                  </TouchableOpacity>
+                  <View>
+                    <CheckBox
+                      value={item.resolve}
+                      color="#1E90FF"
+                      onValueChange={() => handleCheckBox(item.key)}
+                    />
+                  </View>
+                </View>
+              );
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: 200,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: "#1E90FF",
     borderRadius: 5,
     margin: 10,
@@ -102,7 +113,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: 50,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: "#1E90FF",
     borderRadius: 5,
   },
@@ -140,5 +151,17 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 25,
     backgroundColor: "white",
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#1E90FF",
+    top: -285,
+    borderRadius: 10,
+  },
+  picker: {
+    width: 250,
+    height: 35,
+    borderWidth: 3,
+    borderColor: "black",
   },
 });
